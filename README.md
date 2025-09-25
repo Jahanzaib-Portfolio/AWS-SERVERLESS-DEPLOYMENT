@@ -167,4 +167,18 @@ Steps:
 
 ## 🎯 Benefits
 - **Serverless architecture** → No servers to manage.  
-- **Scalable**
+- **Scalable** → Handles traffic spikes easily.  
+- **Secure** → CloudFront HTTPS + IAM roles.  
+- **Low-cost** → Pay only for what you use.  
+
+---
+
+## 🧠 Key Learnings
+- Creating and configuring **DynamoDB tables**.  
+- Assigning correct **IAM roles and permissions**.  
+- Writing Lambda functions for **CRUD operations**.  
+- Exposing Lambda via **API Gateway**.  
+- Hosting a static site with **Amazon S3**.  
+- Distributing content globally via **CloudFront**.  
+
+---
