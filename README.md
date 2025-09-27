@@ -21,7 +21,7 @@ The architecture includes the following components:
 
 ## 1️⃣ Create DynamoDB
 - Create a DynamoDB table.  
-- Table name: `student-data`.  
+- Table name: `studentData`.  
 
 ![DynamoDB Table](images/screenshot1.png)
 
@@ -81,14 +81,14 @@ We will create two Lambda functions:
 - Test the function to check if it works properly.  
 
 ![Test GET Lambda](images/screenshot14.png)
+![API Gateway Console](images/screenshot15.png)  
+![Create API](images/screenshot16.png)
+
 
 ---
 
 ## 4️⃣ Configure API Gateway
 Now go to API Gateway to connect the webpage with Lambda functions.  
-
-![API Gateway Console](images/screenshot15.png)  
-![Create API](images/screenshot16.png)
 
 - Create two methods: one GET and one POST. Associate them with Lambda functions respectively.  
 
@@ -111,18 +111,17 @@ Now go to API Gateway to connect the webpage with Lambda functions.
 - Copy the Invoke URL and paste it into your webpage code that will be uploaded to the S3 bucket.  
 
 ![Invoke URL Copied](images/screenshot29.png)
+![Create S3 Bucket](images/screenshot30.png)  
+![Bucket Created](images/screenshot31.png)
 
 ---
 
 ## 5️⃣ Create S3 Bucket for Web Hosting
 - Create an S3 bucket for web hosting.  
 
-![Create S3 Bucket](images/screenshot30.png)  
-![Bucket Created](images/screenshot31.png)
+![Upload Code](images/screenshot32.png)
 
 - Upload code into the S3 bucket.  
-
-![Upload Code](images/screenshot32.png)
 
 - Edit static website hosting settings in the S3 bucket to make it publicly accessible.  
 
