@@ -9,159 +9,189 @@ The architecture includes the following components:
 - **Amazon DynamoDB** for NoSQL database storage  
 - **AWS IAM** for access control  
 - **Amazon CloudFront** for secure, low-latency content delivery  
+# ☁️ AWS Serverless Web Application
+
 
 ---
 
 ## 🏗️ Project Layout
-The following diagram represents the complete application flow:  
-
 ![Project Layout](images/screenshot00.png)
 
 ---
 
-## 🚀 Implementation Steps
+## 1️⃣ Create DynamoDB
+- Create a DynamoDB table.  
+- Table name: `student-data`.  
 
-### 1. Create DynamoDB Table
-- Open the **DynamoDB Console** and select **Create Table**.  
-- Table name: `student-data`  
-- Partition key: `studentID` (String).  
-
-![DynamoDB Console](images/screenshot1.png)  
-![Create DynamoDB Table](images/screenshot2.png)
+![DynamoDB Table](images/screenshot1.png)
 
 ---
 
-### 2. Create IAM Role for Lambda
-- Navigate to **IAM → Roles → Create Role**.  
-- Select **AWS Service → Lambda** as trusted entity.  
-- Attach the **AmazonDynamoDBFullAccess** policy.  
-- Name the role `Lambda-DynamoDB-Access` and create it.  
-
-![IAM Console](images/screenshot3.png)  
-![Select Lambda Service](images/screenshot4.png)  
-![Attach DynamoDB Policy](images/screenshot5.png)
-
----
-
-### 3. Create Lambda Functions
-We need two Lambda functions:  
-- **POST Lambda** → Inserts student data into DynamoDB.  
-- **GET Lambda** → Retrieves student data from DynamoDB.  
+## 2️⃣ Create IAM Role
+Since we need an IAM role assigned to Lambda functions to access DynamoDB, we will create an IAM role.  
 
 Steps:  
-- Go to **Lambda Console → Create Function**.  
-- Choose runtime: **Python 3.x**.  
-- Assign the IAM role created earlier.  
-- Write code for POST and GET separately.  
-- Deploy and test with sample payloads.  
+1. Go to **Identity and Access Management (IAM)**.  
+2. Click **Create Role**.  
 
-![Lambda Console](images/screenshot6.png)  
-![Create POST Lambda](images/screenshot7.png)  
-![Assign IAM Role](images/screenshot8.png)  
-![Insert POST Lambda Code](images/screenshot9.png)  
-![Test POST Lambda](images/screenshot10.png)
+![IAM Console](images/screenshot2.png)  
+![Create Role](images/screenshot3.png)  
+![IAM Role Setup](images/screenshot4.png)
 
----
+- Select the service for which we are creating the role. In this case, select **Lambda function**.  
 
-### 4. Configure API Gateway
-- Open **API Gateway Console** → **Create API**.  
-- Add two methods:  
-  - **POST** → linked to POST Lambda.  
-  - **GET** → linked to GET Lambda.  
-- Deploy the API to a stage (e.g., `production`).  
-- Copy the **Invoke URL**.  
+![Select Lambda Service](images/screenshot5.png)
 
-![API Gateway Console](images/screenshot11.png)  
-![Create New API](images/screenshot12.png)  
-![Add POST Method](images/screenshot13.png)  
-![Add GET Method](images/screenshot14.png)  
-![Invoke URL](images/screenshot15.png)
+- Add permission to access DynamoDB.  
+
+![Attach DynamoDB Permission](images/screenshot6.png)
+
+- Name the role and click **Create**.  
+
+![Role Created](images/screenshot7.png)
 
 ---
 
-### 5. Host Web Content on S3
-- Create a new **S3 bucket**.  
-- Uncheck “Block all public access”.  
-- Enable **Static Website Hosting**.  
-- Upload `index.html`, `error.html`, and other web files.  
-- Note down the S3 Website Endpoint.  
+## 3️⃣ Create Lambda Functions
+We will create two Lambda functions:  
+- First → to POST data to DynamoDB  
+- Second → to GET data from DynamoDB  
 
-![Create S3 Bucket](images/screenshot16.png)  
-![Upload Files](images/screenshot17.png)  
-![Enable Static Hosting](images/screenshot18.png)  
-![S3 Website Endpoint](images/screenshot19.png)
+### First Lambda Function (POST)
+- Select the IAM role created earlier.  
 
----
+![Lambda Console](images/screenshot8.png)  
+![Select IAM Role](images/screenshot9.png)
 
-### 6. Configure S3 Bucket Policy
-- Go to **Permissions → Bucket Policy**.  
-- Use the AWS Policy Generator to create a policy.  
-- Allow `s3:GetObject` for `*` on the bucket ARN.  
-- Apply the policy to make files publicly readable.  
+- Delete the default code and paste your Lambda code.  
 
-![Open Bucket Policy](images/screenshot20.png)  
-![Policy Generator](images/screenshot21.png)  
-![Apply Policy](images/screenshot22.png)
+![Insert POST Code](images/screenshot10.png)
 
----
+### Second Lambda Function (GET)
+- Create another Lambda function.  
+- Keep everything the same.  
 
-### 7. Connect Frontend to Backend
-- Edit your `index.html` file.  
-- Replace the placeholder API URLs with the **API Gateway Invoke URL**.  
-- Upload updated files to S3.  
+![Create GET Lambda](images/screenshot11.png)  
+![Paste GET Code](images/screenshot12.png)  
 
-![Update HTML](images/screenshot23.png)  
-![Upload Updated Files](images/screenshot24.png)  
-![Confirm API Connection](images/screenshot25.png)
+- Paste the GET Lambda code here.  
+
+![Insert GET Code](images/screenshot13.png)
+
+- Test the function to check if it works properly.  
+
+![Test GET Lambda](images/screenshot14.png)
 
 ---
 
-### 8. Test the Application
-- Open the **S3 Website Endpoint** in your browser.  
-- Enter student details and submit the form (POST request).  
-- Check **DynamoDB** to confirm data insertion.  
-- Retrieve student data via GET request to verify retrieval.  
+## 4️⃣ Configure API Gateway
+Now go to API Gateway to connect the webpage with Lambda functions.  
 
-![Open S3 Website](images/screenshot26.png)  
-![Enter Student Data](images/screenshot27.png)  
-![Submit Form](images/screenshot28.png)  
-![Lambda Processes Data](images/screenshot29.png)  
-![Check DynamoDB Records](images/screenshot30.png)  
-![Execute GET Request](images/screenshot31.png)  
-![Data Displayed](images/screenshot32.png)
+![API Gateway Console](images/screenshot15.png)  
+![Create API](images/screenshot16.png)
 
----
+- Create two methods: one GET and one POST. Associate them with Lambda functions respectively.  
 
-### 9. Secure Website with CloudFront
-- Go to **CloudFront Console → Create Distribution**.  
-- Choose your **S3 bucket** as the origin.  
-- Enable **Redirect HTTP to HTTPS**.  
-- Copy the CloudFront distribution domain.  
-- Now your app is served securely via HTTPS with low latency.  
+![Add Methods](images/screenshot17.png)  
+![Associate Methods](images/screenshot18.png)  
+![Save Methods](images/screenshot19.png)  
+![Setup Completed](images/screenshot20.png)  
+![Deploy API](images/screenshot21.png)  
+![Production Stage](images/screenshot22.png)  
+![Deployment Success](images/screenshot23.png)  
+![Invoke URL](images/screenshot24.png)  
+![Stage Info](images/screenshot25.png)  
+![Copy Invoke URL](images/screenshot26.png)
 
-![CloudFront Console](images/screenshot33.png)  
-![Create Distribution](images/screenshot34.png)  
-![Select S3 as Origin](images/screenshot35.png)  
-![CloudFront Settings](images/screenshot36.png)  
-![Deploy Distribution](images/screenshot37.png)  
-![CloudFront Domain URL](images/screenshot38.png)  
-![Access via CloudFront](images/screenshot39.png)
+- Give the stage a name (e.g., `production`).  
+
+![Stage Setup](images/screenshot27.png)  
+![Stage Deployment](images/screenshot28.png)
+
+- Copy the Invoke URL and paste it into your webpage code that will be uploaded to the S3 bucket.  
+
+![Invoke URL Copied](images/screenshot29.png)
 
 ---
 
-### 🔒 Final Verification
-- Compare **S3 Endpoint (HTTP)** and **CloudFront URL (HTTPS)**.  
-- Ensure both index and error pages are working.  
+## 5️⃣ Create S3 Bucket for Web Hosting
+- Create an S3 bucket for web hosting.  
 
-![Compare URLs](images/screenshot40.png)  
-![S3 Endpoint](images/screenshot41.png)  
-![CloudFront Endpoint](images/screenshot42.png)
+![Create S3 Bucket](images/screenshot30.png)  
+![Bucket Created](images/screenshot31.png)
+
+- Upload code into the S3 bucket.  
+
+![Upload Code](images/screenshot32.png)
+
+- Edit static website hosting settings in the S3 bucket to make it publicly accessible.  
+
+![Static Website Hosting](images/screenshot33.png)  
+![Hosting Enabled](images/screenshot34.png)
 
 ---
 
-## 🔗 Final URLs
-- **CloudFront Secure URL**: `https://<your-distribution-id>.cloudfront.net/`  
-- **S3 Website URL**: `http://<your-bucket-name>.s3-website.<region>.amazonaws.com/`
+## 6️⃣ Create and Apply Bucket Policy
+- Create a bucket policy using the Policy Generator.  
+
+![Policy Generator](images/screenshot35.png)
+
+- Copy the generated policy and paste it into the S3 bucket policy editor.  
+
+![Paste Policy](images/screenshot36.png)
+
+- If the bucket is not public, the policy will not be applicable and will give a conflict error. Change the bucket status to **Public**, then reapply the policy.  
+
+Now our page is publicly accessible via S3 web hosting.  
+
+![S3 Website Accessible](images/screenshot37.png)
+
+---
+
+## 7️⃣ API Gateway Triggers Lambda
+API Gateway will trigger the Lambda function when requests are made from the webpage.  
+
+---
+
+## 8️⃣ Enter Data and Test Website
+- Enter some data on the website and submit.  
+
+![Enter Data](images/screenshot38.png)
+
+- POST successful → now check if the data can be retrieved. Click **View All Students**.  
+
+![POST Success](images/screenshot39.png)
+
+- The posted data is successfully retrieved and displayed.  
+
+---
+
+## 9️⃣ Important Note — S3 Website Is Not Secure
+- The website hosted by S3 is **not secure**.  
+- URL Example:  
+  `http://web-app-for-student-data.s3-website.eu-north-1.amazonaws.com/`  
+
+Since the link uses **HTTP**, it is not secure.  
+To make it secure, we will use **CloudFront**, which not only secures the website but also reduces latency.  
+
+---
+
+## 🔟 Create CloudFront Distribution
+- Create a CloudFront distribution and add the S3 bucket URL.  
+
+![CloudFront Console](images/screenshot40.png)
+
+- Keep the remaining settings as default.  
+
+![Default Settings](images/screenshot41.png)
+
+- Once created, you will get a new domain name where the same content will be displayed securely.  
+
+![CloudFront Domain](images/screenshot42.png)
+
+### URLs:
+- **CloudFront URL:** `https://d11g10oy7djsyh.cloudfront.net/`  
+- **S3 Bucket URL:** `http://web-app-for-student-data.s3-website.eu-north-1.amazonaws.com/`
 
 ---
 
